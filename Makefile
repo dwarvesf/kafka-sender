@@ -1,7 +1,7 @@
 .PHONY: build-alpine up
 
 build-alpine:
-	GOOS=linux GOARCH=amd64 go build -o server main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server main.go
 
 up: build-alpine
 	docker rm -f kafka-sender | true && \
