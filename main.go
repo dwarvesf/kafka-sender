@@ -1,18 +1,18 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
 
-	"github.com/dwarvesf/yggdrasil/toolkit"
+	"github.com/dwarvesf/yggdrasil/toolkit/queue"
+	"github.com/dwarvesf/yggdrasil/toolkit/queue/kafka"
+
 	"github.com/go-chi/chi"
 	"github.com/go-kit/kit/log"
 	consul "github.com/hashicorp/consul/api"
-	kafka "github.com/segmentio/kafka-go"
 )
 
 func main() {
@@ -24,12 +24,8 @@ func main() {
 	}
 
 	consulClient, err := consul.NewClient(&consul.Config{
-		Address: fmt.Sprintf("consul:8500"),
+		Address: fmt.Sprintf("consul-server:8500"),
 	})
-	if err != nil {
-		panic(err)
-	}
-	kafkaAddr, kafkaPort, err := toolkit.GetServiceAddress(consulClient, "kafka")
 	if err != nil {
 		panic(err)
 	}
@@ -62,17 +58,10 @@ func main() {
 			return
 		}
 
-		kw := kafka.NewWriter(kafka.WriterConfig{
-			Brokers: []string{fmt.Sprintf("%v:%v", kafkaAddr, kafkaPort)},
-			Topic:   req.Service,
-		})
-		kw.WriteMessages(context.Background(),
-			kafka.Message{
-				Key:   []byte(req.Service),
-				Value: data,
-			},
-		)
-		kw.Close()
+		var q queue.Queue
+		q = kafka.New(consulClient, req.Service)
+		q.Write([][]byte{data})
+		q.Close()
 
 		logger.Log("status", fmt.Sprintf("sent [%v] request to kafka", req.Service))
 		w.Write([]byte("ok"))

@@ -10,11 +10,15 @@
 
 [[projects]]
   branch = "develop"
-  digest = "1:5694d6b9b956fde488fec99dcf3340e582ec1ef00bc7f7124d0bb0ddd3855fbe"
+  digest = "1:7fe0c5dadc2b4701154b8b9a032b3dca15497d2718a3852bf1df814970a5d7e4"
   name = "github.com/dwarvesf/yggdrasil"
-  packages = ["toolkit"]
+  packages = [
+    "toolkit",
+    "toolkit/queue",
+    "toolkit/queue/kafka",
+  ]
   pruneopts = "UT"
-  revision = "d684a633873b94acc29c1b2c5063d88b6e24d36a"
+  revision = "3cb3ed358171b3a21f7a1f735f5df64a1ef1681c"
 
 [[projects]]
   digest = "1:b9914f85d95a0968bafd1be1908ba29e2eafafd88d6fd13696be42bf5368c380"
@@ -118,22 +122,22 @@
   revision = "06020f85339e21b2478f756a78e295255ffa4d6a"
 
 [[projects]]
+  branch = "master"
   digest = "1:7f081bc4c81e3e69f4d3b4a87e1b23f2a395e9804f06895c52f8f4157af7a35a"
   name = "github.com/segmentio/kafka-go"
   packages = ["."]
   pruneopts = "UT"
   revision = "48c37f796910d8154479aaa04ade5843ae4f55d0"
-  version = "v0.1.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/dwarvesf/yggdrasil/toolkit",
+    "github.com/dwarvesf/yggdrasil/toolkit/queue",
+    "github.com/dwarvesf/yggdrasil/toolkit/queue/kafka",
     "github.com/go-chi/chi",
     "github.com/go-kit/kit/log",
     "github.com/hashicorp/consul/api",
-    "github.com/segmentio/kafka-go",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
