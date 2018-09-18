@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yggdrasil-kafka-sender-service
+spec:
+  selector:
+    app: yggdrasil-kafka-sender-app
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3030
+  type: LoadBalancer

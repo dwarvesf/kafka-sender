@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yggdrasil-kafka-sender-deployment
+  labels:
+    app: yggdrasil-kafka-sender-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yggdrasil-kafka-sender-app
+  template:
+    metadata:
+      labels:
+        app: yggdrasil-kafka-sender-app
+    spec:
+      containers:
+      - name: yggdrasil-kafka-sender
+        image: hub.dwarvesf.com/yggdrasil/kafka-sender:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3030
+        env:
+        - name: SERVICE_ADDRESS
+          value: "yggdrasil-kafka-sender-service"
+        - name: PORT
+          value: "3030"
+      imagePullSecrets:
+      - name: dwarvesf

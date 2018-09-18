@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/dwarvesf/yggdrasil/toolkit/queue"
 	"github.com/dwarvesf/yggdrasil/toolkit/queue/kafka"
 
 	"github.com/go-chi/chi"
@@ -37,6 +36,7 @@ func main() {
 		Payload map[string]interface{} `json:"payload"`
 	}
 
+	q := kafka.New(consulClient)
 	r.Post("/", func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body) //<--- here!
 		if err != nil {
@@ -58,10 +58,9 @@ func main() {
 			return
 		}
 
-		var q queue.Queue
-		q = kafka.New(consulClient, req.Service)
-		q.Write([][]byte{data})
-		q.Close()
+		qw := q.NewWriter(req.Service)
+		qw.Write(req.Service, []byte(data))
+		qw.Close()
 
 		logger.Log("status", fmt.Sprintf("sent [%v] request to kafka", req.Service))
 		w.Write([]byte("ok"))
